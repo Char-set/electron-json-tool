@@ -24,7 +24,7 @@ export default {
     },
     computed:{
         dataType(){
-            let type = typeof this.data;
+            let type = this.getDataType(this.data);
             if(type == 'string' && /^http(s)?:\/\//.test(this.data)){
                 type += '_url'
             }
@@ -33,7 +33,7 @@ export default {
     },
     methods:{
         miniDataFormat(data){
-            let text,type = typeof data;
+            let text,type = this.getDataType(data);
             switch (type) {
                 case 'string':
                     text = `"${data}"`;

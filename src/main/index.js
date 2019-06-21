@@ -36,6 +36,7 @@ function createWindow () {
           { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
           { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
           { label: "SelectAll", accelerator: "CmdOrCtrl+A", selector: "selectAll:" },
+          { label: "undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
         ]
       }
     ];

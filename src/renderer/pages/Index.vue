@@ -26,6 +26,12 @@
                             <div class="tooltips">清空</div>
                         </transition>
                     </div>
+                    <div class="toolItem" @click="dowload">
+                        <i class="iconfont icon-upload-demo"></i>
+                        <transition name="el-fade-in">
+                            <div class="tooltips">另存为</div>
+                        </transition>
+                    </div>
                     <!-- <div id="copyBtn" :data-clipboard-text="miniData" class="toolItem"> -->
                     <div @click="copyValue" class="toolItem">
                         <i class="iconfont icon-copy"></i>
@@ -51,6 +57,7 @@
 // import VueJsonPretty from 'vue-json-pretty'
 import VueJsonPretty from '../components/json-beautiful/app'
 import { formatToJson } from '../utils/Utils'
+let fs = require('fs');
 export default {
     name:'index',
     components:{
@@ -71,7 +78,10 @@ export default {
                 if(val && val.length > 0){
                     let str = val.replace(/\r\n/g,'').replace(/\n/g,"");
                     let objStr = new Function('return '+ str +';')();
+                    let time = new Date().getTime();
+                    console.log(time);
                     this.json = formatToJson(objStr);
+                    console.log(new Date().getTime() - time);
                 } else{
                     this.errorText = '';
                     this.json = '';
@@ -108,8 +118,22 @@ export default {
             // this.json = formatToJson(objStr);
         },
         copyValue() {
-            this.$electron.clipboard.writeText(this.miniData);
+            if(this.showMini){
+                this.$electron.clipboard.writeText(this.miniData);
+            } else{
+                this.$electron.clipboard.writeText(JSON.stringify(this.json,'','\t'));
+            }
             this.$message('复制成功');
+        },
+        dowload() {
+            this.$electron.remote.dialog.showSaveDialog({
+                title:'文件另存为',
+            },filePath => {
+                if(filePath){
+                    fs.writeFileSync(filePath,JSON.stringify(this.json,'','\t'));
+                    this.$message('保存成功');
+                }
+            });
         }
     },
     mounted:function(){

@@ -13,14 +13,19 @@
             </symbol-left>
             <div
                 v-show="visible" 
-                v-for="(item,key) in data"
+                v-for="(item,key,index) in data"
                 :key="key">
-                <json-beautiful 
-                    :data="item"
-                    :prent-data="data"
-                    :currentDeep="currentDeep + 1"
-                    :currentKey="key">
-                </json-beautiful>
+                <template v-if="(Array.isArray(data) && key < showMax) || (isObject(data) && index < showMax)">
+                    <json-beautiful 
+                        :data="item"
+                        :prent-data="data"
+                        :currentDeep="currentDeep + 1"
+                        :currentKey="key">
+                    </json-beautiful>
+                </template>
+                <template v-if="(Array.isArray(data) && key == showMax) || (isObject(data) && index == showMax)">
+                    <div class="beautiful_tree ignore" @click="showMax += 100">···</div>
+                </template>
             </div>
             <symbol-right
                 :visible.sync="visible"
@@ -46,7 +51,8 @@ export default {
     name:'json-beautiful',
     data(){
         return {
-            visible:true
+            visible:this.currentDeep < 4,
+            showMax:20,// 最大显示子项数量
         }
     },
     components:{
@@ -93,6 +99,14 @@ export default {
     &.root{
         padding-left: 0;
         border-left: none;
+    }
+    &.ignore{
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: bold;
+        &:hover{
+            color: #25aae2;
+        }
     }
     ._symbol-left,._symbol-right{
         cursor: pointer;
